@@ -145,14 +145,14 @@ func onCounterStop(i int, wg *sync.WaitGroup) {
 }
 
 func main() {
-	wg := &sync.WaitGroup{} //общая WaitGroup
+	wg := &sync.WaitGroup{} 
 	cond := &sync.Cond{L: &sync.Mutex{}}
 	textCh := make(chan string, 1)
 	stopCh := make(chan struct{})
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), time.Second*1)
 	defer cancel()
 
-	// запускаем группы воркеров
+	
 	log.Println("main: Children! Go for a walk!")
 
 	for i := 1; i <= numWorkersInGroup; i++ {
@@ -189,7 +189,7 @@ func main() {
 		go onCounterStop(i, wg)
 	}
 
-	textCh <- "Add to counter!" // сообщение воркеру msgChanStop
+	textCh <- "Add to counter!"
 
 	log.Println("main: sleeping 4 seconds...")
 	time.Sleep(time.Second * 4)

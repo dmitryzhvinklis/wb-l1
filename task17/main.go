@@ -11,10 +11,7 @@ import (
 	"time"
 )
 
-// binarySearch возвращает индекс элемента val в массиве v.
-// Если элемент отсутствует, функция возвращает -1.
-// Для корректного результата массив должен быть отсортированным.
-// Если в массиве есть повторяющиеся элементы, может быть возвращён индекс любого из них.
+
 func binarySearch(v []int, val int) int {
 	if !sort.IntsAreSorted(v) {
 		panic("slice is not sorted")
@@ -35,28 +32,26 @@ func binarySearch(v []int, val int) int {
 	return -1
 }
 
-// тестирование функции binarySearch рандомными значениями
+
 func main() {
-	const sliceSize = 10000 // размер массива
-	const maxStep = 50      // максимальный шаг между двумя элементами
+	const sliceSize = 10000 
+	const maxStep = 50      
 	rand.Seed(time.Now().UnixNano())
 
-	firstElement := rand.Intn(sliceSize/2) - rand.Intn(sliceSize) // первый элемент
+	firstElement := rand.Intn(sliceSize/2) - rand.Intn(sliceSize) 
 
-	// randStep возвращает рандомный шаг
+
 	randStep := func() int {
 		if maxStep == 1 {
 			return 1
 		}
-		return rand.Intn(maxStep-1) + 1 // шаг не должен быть равен 0
+		return rand.Intn(maxStep-1) + 1 
 	}
 
-	testSlice := make([]int, sliceSize) // тестовый слайс
-	// notInSlice содержит все значения, не входящие в тестовый слайс, лежащие в его границах
-	// (а также по одному значению, выходящему за границы тестового слайса).
+	testSlice := make([]int, sliceSize) 
 	notInSlice := []int{firstElement - randStep()}
 
-	// заполняем тестовые слайсы
+
 	for i, k := 0, firstElement; i < sliceSize; i, k = i+1, k+randStep() {
 		testSlice[i] = k
 		if i == 0 {
@@ -69,16 +64,16 @@ func main() {
 	notInSlice = append(notInSlice, testSlice[sliceSize-1]+randStep())
 	errCount := 0
 
-	// выполняем поиск каждого элемента, содержащегося в слайсе
+
 	for _, val := range testSlice {
 		idx := binarySearch(testSlice, val)
-		if testSlice[idx] != val { // проверка: по возвращенному индексу должно быть искомое значение
+		if testSlice[idx] != val { 
 			errCount++
 			fmt.Printf("idx=%d, val=%d, testSlice[%d]=%d\n", idx, val, idx, testSlice[idx])
 		}
 	}
 
-	// пытаемся найти в слайсе то, чего там нет
+
 	for _, val := range notInSlice {
 		if idx := binarySearch(testSlice, val); idx != -1 {
 			fmt.Printf("val=%d, idx=%d (must be -1), testSlice[%d]=%d\n", val, idx, idx, testSlice[idx])

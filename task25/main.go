@@ -8,15 +8,14 @@ import (
 	"time"
 )
 
-// sleepLoop запускает цикл, работающий до момента, когда текущее время совпадает с заданным
-// работает, но грузит процессор!
+
 func sleepLoop(interval time.Duration) {
 	wakeUp := time.Now().Add(interval)
 	for time.Now().Before(wakeUp) {
 	}
 }
 
-// sleepTimeAfter использует функцию time.After. Процессор не грузит.
+
 func sleepTimeAfter(interval time.Duration) {
 	<-time.After(interval)
 }

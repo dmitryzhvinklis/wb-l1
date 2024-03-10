@@ -11,37 +11,37 @@ import (
 	"time"
 )
 
-// writer отправляет последовательные числа в канал. Горутина завершается при истечении контекста.
+
 func writer(ctx context.Context, ch chan<- int) {
-	for i := 0; true; i++ { // выполнять до лучших времён
+	for i := 0; true; i++ { 
 		select {
 		default:
 			ch <- i
-			time.Sleep(time.Millisecond * 10) // задержка для наглядности
+			time.Sleep(time.Millisecond * 10) 
 		case <-ctx.Done():
-			close(ch) // закрытие канала является сигналом завершения для ридера
+			close(ch) 
 			return
 		}
 	}
 }
 
-// reader читает числа из канала до посинения (зачёркнуто) до его закрытия.
+
 func reader(ch <-chan int, wg *sync.WaitGroup) {
 	for num := range ch {
-		fmt.Printf("%d\t", num) // сделаем красивые колонки табуляцией
+		fmt.Printf("%d\t", num) 
 	}
 	fmt.Println()
-	wg.Done() // отпускаем главный поток
+	wg.Done() 
 }
 
 func main() {
-	// создаём контекст, который завершится через 5 сек.
+	
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()            // на всякий случай, чтобы избежать утечки контекста, и чтобы линтер не ругался
-	wg := new(sync.WaitGroup) // последнее звено в цепи остановок - ридер, wg нужна для него
+	defer cancel()            
+	wg := new(sync.WaitGroup) 
 	ch := make(chan int, 1)
 	wg.Add(1)
 	go writer(ctx, ch)
 	go reader(ch, wg)
-	wg.Wait() // ждем остановки ридера
+	wg.Wait() 
 }

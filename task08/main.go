@@ -5,24 +5,24 @@ package main
 
 import "fmt"
 
-// setBit устанавливает i-й бит в числе num в значение set(true = 1, false = 0)
+
 func setBit(num uint64, i int, set bool) uint64 {
 	if set {
-		num = num | (1 << i) // если нужно установить - то OR
+		num = num | (1 << i) 
 	} else {
-		num = num ^ (1 << i) // если сбросить - то XOR
+		num = num ^ (1 << i) 
 	}
 	return num
 }
 
 func main() {
 	var n uint64
-	n = setBit(n, 10, true) // +1024
+	n = setBit(n, 10, true)
 	fmt.Println(n)
-	n = setBit(n, 2, true) // +4
+	n = setBit(n, 2, true) 
 	fmt.Println(n)
-	n = setBit(n, 10, false) // -1024
+	n = setBit(n, 10, false) 
 	fmt.Println(n)
-	n = setBit(n, 0, true) // +1
-	fmt.Println(n)         // = 5
+	n = setBit(n, 0, true) 
+	fmt.Println(n)         
 }

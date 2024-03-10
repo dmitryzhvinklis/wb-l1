@@ -15,7 +15,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Cервис A выдаёт заказы в формате XML.
+
 type (
 	OrderServiceA struct {
 		XMLName         xml.Name          `xml:"order"`
@@ -36,7 +36,7 @@ type (
 	}
 )
 
-// Сервис B принимает информацию в виде JSON.
+
 type OrderServiceB struct {
 	OrderID         uuid.UUID `json:"order_id"`
 	ProcessedAt     time.Time `json:"processed_at"`
@@ -47,15 +47,12 @@ type OrderServiceB struct {
 	TotalAmountRUB  string    `json:"total_amount_rub"`
 }
 
-// AdapterAB выполняет конвертацию данных, полученных от сервиса A в формат, который читает сервис B.
 type AdapterAB struct {
 	order  OrderServiceA
 	writer io.Writer
 }
 
-// Adapt конвертирует данные заказа из структуры формата сервиса A в формат сервиса B.
-// Эта функция используется, если нужен экземпляр структуры сервиса B.
-// Для прямого конвертирования из XML в JSON используется интерфейс Writer.
+
 func (ad *AdapterAB) Adapt(xmlOrder []byte) (*OrderServiceB, error) {
 	if err := ad.importXML(xmlOrder); err != nil {
 		return nil, fmt.Errorf("could not decode the order: %w", err)
@@ -63,12 +60,12 @@ func (ad *AdapterAB) Adapt(xmlOrder []byte) (*OrderServiceB, error) {
 	return ad.convert(), nil
 }
 
-// NewAdapter создаёт адаптер, реализующий интерфейс io.Writer.
+
 func NewAdapter(w io.Writer) *AdapterAB {
 	return &AdapterAB{writer: w}
 }
 
-// Write реализует интерфейс io.Writer. Осуществляет конвертацию заказов из формата сервиса A в формат сервиса B.
+
 func (ad *AdapterAB) Write(p []byte) (n int, err error) {
 	if err := ad.importXML(p); err != nil {
 		return 0, err
@@ -81,7 +78,7 @@ func (ad *AdapterAB) Write(p []byte) (n int, err error) {
 	return ad.writer.Write(jsonOrder)
 }
 
-// importXML раскодирует XML-сообщение в формат структтуры сервиса A.
+
 func (ad *AdapterAB) importXML(p []byte) error {
 	if err := xml.Unmarshal(p, &ad.order); err != nil {
 		return fmt.Errorf("could not decode the order: %w", err)
@@ -89,8 +86,7 @@ func (ad *AdapterAB) importXML(p []byte) error {
 	return nil
 }
 
-// convert преобразует структуру заказа сервиса A в струтуру сервиса B.
-// Валюта конвертируется в рубли и подсчитывается общая стоимость заказов.
+
 func (ad *AdapterAB) convert() *OrderServiceB {
 	totalProducts := 0
 	totalAmount := 0.0
@@ -113,7 +109,7 @@ func (ad *AdapterAB) convert() *OrderServiceB {
 	}
 }
 
-// convertPriceToRub конвертирует валюту по выгодному курсу))
+
 func convertPriceToRub(amount float64, currency string) (float64, error) {
 	const (
 		eurToRub = 87.83
@@ -133,7 +129,7 @@ func convertPriceToRub(amount float64, currency string) (float64, error) {
 	return amount * rate, nil
 }
 
-// данные заказов для тестирования
+
 var (
 	order1 = []byte(`<order>
 <order_id>349d828e-16a8-4db9-8461-02fcdc5a47f6</order_id>
@@ -177,12 +173,12 @@ var (
 )
 
 func main() {
-	// пример использования адаптера как Writer'а
+	
 	a := NewAdapter(os.Stdout)
 	a.Write(order1)
 	fmt.Println()
 
-	// для конвертации в структуру конструктор не нужен
+	
 	order, err := new(AdapterAB).Adapt(order2)
 	if err != nil {
 		panic(err)

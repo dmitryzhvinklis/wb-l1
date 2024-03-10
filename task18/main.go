@@ -10,22 +10,22 @@ import (
 	"sync/atomic"
 )
 
-// syncCounter является thread-safe счетчиком.
+
 type syncCounter struct {
 	counter uint64
 }
 
-// Inc инкрементирует счётчик
+
 func (c *syncCounter) Inc() {
 	atomic.AddUint64(&c.counter, 1)
 }
 
-// Count возвращает текущее выражение счётчика.
+
 func (c *syncCounter) Count() uint64 {
 	return atomic.LoadUint64(&c.counter)
 }
 
-// Reset устанавливает счётчик в 0.
+
 func (c *syncCounter) Reset() {
 	atomic.StoreUint64(&c.counter, 0)
 }
@@ -48,5 +48,5 @@ func main() {
 	}
 
 	wg.Wait()
-	fmt.Println(c.Count()) // должен вывести значение numOfWorkers * countsperWorker
+	fmt.Println(c.Count()) 
 }

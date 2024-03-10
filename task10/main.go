@@ -7,13 +7,13 @@ package main
 
 import "fmt"
 
-// groupTemp группирует числа из переданного слайса в группы с шагом в 10 градусов.
+
 func groupTemp(temperatures []float32) map[int][]float32 {
 	groups := make(map[int][]float32)
 	for _, t := range temperatures {
-		// вычисляем идентификатор группы
+
 		gID := int(t/10) * 10
-		// go лояльно относится к неинициализированным массивам...
+
 		groups[gID] = append(groups[gID], t)
 	}
 	return groups

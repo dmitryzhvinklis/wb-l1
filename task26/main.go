@@ -14,11 +14,10 @@ import (
 	"strings"
 )
 
-// uniqueChars проверяет, являются ли все символы в данной строке уникальными (без учёта регистра).
 func uniqueChars(s string) bool {
 	hasRepeat := make(map[rune]bool)
 	for _, r := range strings.ToLower(s) {
-		// если в мапе уже есть такой символ - возвращаем false
+
 		if hasRepeat[r] {
 			return false
 		}

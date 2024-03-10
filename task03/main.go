@@ -11,59 +11,56 @@ import (
 	"time"
 )
 
-// useAtomic использует возможности пакета sync.Atomic.
 func useAtomic(numbers []int) int {
 	var result int64
-	// используем sync.WaitGroup, чтобы дождаться окончания работы воркеров.
+
 	wg := new(sync.WaitGroup)
 	for _, num := range numbers {
 		wg.Add(1)
-		// передаём число в качестве аргумента горутине, чтобы избежать data race.
+
 		go func(n int) {
-			// atomic гарантирует, что не будет гонки данных
+
 			atomic.AddInt64(&result, int64(n*n))
 			wg.Done()
 		}(num)
 	}
-	// ждём окончания
+
 	wg.Wait()
 	return int(result)
 }
 
-// useChannels использует передачу данных и результата по каналам.
-// Оставляем возможность задать размер буфера канала для экспериментов.
 func useChannels(numbers []int, chSize int) int {
 	wg := new(sync.WaitGroup)
 
-	chSqr := make(chan int, chSize) // канал для передачи квадратов
-	chResult := make(chan int)      // канал для результата
+	chSqr := make(chan int, chSize)
+	chResult := make(chan int)
 
 	for _, num := range numbers {
 		wg.Add(1)
 		go func(n int) {
-			// передаем квадрат в канал
+
 			chSqr <- n * n
 			wg.Done()
 		}(num)
 	}
-	// эта горутина собирает квадраты из канала и складывает их
+
 	go func() {
 		var result int
-		// цикл завершится, когда канал будет закрыт
+
 		for num := range chSqr {
 			result += num
 		}
 		chResult <- result
 	}()
-	// ждём окончания
+
 	wg.Wait()
-	// закрытие канала даёт сигнал горутине послать результат
+
 	close(chSqr)
 	return <-chResult
 }
 
 func main() {
-	// выполняем задание
+
 	nums := []int{2, 4, 6, 8, 10}
 	fmt.Println(useAtomic(nums), useChannels(nums, 5))
 

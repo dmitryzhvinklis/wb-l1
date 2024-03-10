@@ -11,11 +11,11 @@ import (
 
 func main() {
 	numbers := []int{2, 4, 6, 8, 10}
-	// используем sync.WaitGroup, чтобы дождаться окончания работы воркеров.
+
 	wg := new(sync.WaitGroup)
 	for _, num := range numbers {
 		wg.Add(1)
-		// передаём число в качестве аргумента горутине, чтобы избежать data race.
+
 		go func(n int) {
 			fmt.Println(n * n)
 			wg.Done()

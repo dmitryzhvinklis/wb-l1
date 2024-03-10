@@ -10,15 +10,15 @@ import (
 	"math/rand"
 )
 
-// producer извлекает числа из переданного массива и посылает их в канал.
+
 func producer(arr []int, ch chan<- int) {
 	for _, x := range arr {
 		ch <- x
 	}
-	close(ch) // закрытие канала - сигнал к окончанию работы следующего звена
+	close(ch) 
 }
 
-// multiplier читает числа из канала chIn, умножает их на 2 и передаёт в канал chOut.
+
 func multiplier(chIn <-chan int, chOut chan<- int) {
 	for x := range chIn {
 		chOut <- x * 2
@@ -30,7 +30,7 @@ func main() {
 	const arraySize = 1000
 	arr := make([]int, arraySize)
 	for i := range arr {
-		arr[i] = rand.Intn(math.MaxInt / 2) // чтобы избежать переполнения при удвоении (и появления отрицательных чисел)
+		arr[i] = rand.Intn(math.MaxInt / 2) 
 	}
 	fmt.Println()
 	prodToMult := make(chan int)
